@@ -1,0 +1,1 @@
+var request = require('request');var util = require('./utility');exports.renderIndex = function(req, res) {  res.render('index');}
