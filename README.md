@@ -3,14 +3,14 @@
 
 ### Overview:
 
-You have 36 hours to produce something compelling using the skills you've honed over the past five weeks. 
+You have 36 hours to produce something compelling using the skills you've honed over the past five weeks.
 
 __Q:__ What are your inputs?
-<br>
+
 __A:__ 36 hours of (relatively) undivided attention
 
 __Q:__ What is the required output?
-<br>
+
 __A:__ A compelling product presentation delivered to your classmates.
 
 
@@ -42,6 +42,6 @@ To build on your learning of core engineering concepts, we will begin thinking a
 
 ## Extra Credit
 
-- [ ] Storage - if your app persists data, use a tool like Parse or Firebase. 
-- [ ] If applicable, use an MVC Framework - Make your app production grade with a full-on MVC. 
+- [ ] Storage - if your app persists data, use a tool like Parse or Firebase.
+- [ ] If applicable, use an MVC Framework - Make your app production grade with a full-on MVC.
 
