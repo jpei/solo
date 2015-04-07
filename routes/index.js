@@ -1,1 +1,0 @@
-var express = require('express');var router = express.Router();var handler = require('../app/lib/request-handler');router.get('/', handler.renderIndex);module.exports = router;
