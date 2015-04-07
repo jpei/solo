@@ -1,1 +1,28 @@
-<!DOCTYPE html><html ng-app='crime-stats'><head>  <meta charset="utf-8" />  <title>SF Crime</title>  <link rel="stylesheet" type="text/css"</head><body>One Day Snapshot:<br><script type="text/javascript" src="/bower_components/jquery/dist/jquery.min.js"></script><script>$.get('/crime', function(data){  data.forEach(function(crime){    $('body').append(crime + "<br>");  });});</script></body></html>
+<!DOCTYPE html>
+<html ng-app='crime-stats'>
+<head>
+  <meta charset="utf-8" />
+  <title>SF Crime</title>
+  <link rel="stylesheet" type = "text/css" href="stylesheets/style.css" />
+</head>
+<body>
+  <h1>SF Crime Stats</h1>
+  <div class='navigation'>
+    <ul>
+      <li><a href='#/day'>1 Day</a></li>
+      <li><a href='#/week'>1 Week</a></li>
+      <li><a href='#/month'>1 Month</a></li>
+      <li><a href='#/year'>1 Year</a></li>
+    </ul>
+  </div>
+  <div id='container'></div>
+
+  <div ui-view></div>
+
+  <script src="/lib/jquery/dist/jquery.min.js"></script>
+  <script src="/lib/angular/angular.min.js"></script>
+  <script src="/lib/angular-ui-router/release/angular-ui-router.min.js"></script>
+  <script src="controller/controller.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
