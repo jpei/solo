@@ -43,3 +43,12 @@ background-color: #ccc;
 clear: both;
 margin-top: 10px;
 }
+.crime {
+  clear: both;
+  margin-bottom: 2px;
+  padding: 2px;
+  min-height: 10px
+}
+.info {
+  font-weight: 600;
+}
