@@ -52,3 +52,6 @@ margin-top: 10px;
 .info {
   font-weight: 600;
 }
+.hidden {
+  display: none;
+}

@@ -1,7 +1,8 @@
 <h2><div class="info">One {{capitalizeFirstLetter(timeUnit)}} Snapshot: <br>
-  Earliest: {{crimes[crimes.length-1][0]}} <br>
-  Latest: {{crimes[0][0]}} <br>
+  Earliest: {{crimes[crimes.length-1][0].slice(0,10)}} <br>
+  Latest: {{crimes[0][0].slice(0,10)}} <br>
   Count: {{count}} <br>
   Frequency: {{frequency}}/day <br>
+<img src="assets/spiffygif_46x46.gif" loading />
 </div></h2>
 <div class="crime" ng-repeat='crime in crimes'>{{crime[1]}}</div>

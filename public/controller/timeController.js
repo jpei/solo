@@ -1,6 +1,6 @@
 angular.module('crime-stats.timeController', [])
 
-.controller('TimeController', function ($scope, $location, TimeUnits) {
+.controller('TimeController', function ($scope, $http, $location, TimeUnits) {
   $scope.crimes = [];
   $scope.count = $scope.frequency = 0;
   $scope.timeUnit = $location.$$url.slice(1);
@@ -8,12 +8,15 @@ angular.module('crime-stats.timeController', [])
     return str.charAt(0).toUpperCase()+str.slice(1);
   };
 
-  $.get('/crime/'+$scope.timeUnit, function(data){
-    $scope.crimes = data;
-    $scope.count = $scope.crimes.length;
-    $scope.frequency = ($scope.count / (TimeUnits[$scope.timeUnit]() / TimeUnits.day())).toString().slice(0,7);
-    $scope.$digest();
-  });
+  $http.get('/crime/'+$scope.timeUnit)
+    .success(function(data) {
+      $scope.crimes = data;
+      $scope.count = $scope.crimes.length;
+      $scope.frequency = ($scope.count / (TimeUnits[$scope.timeUnit]() / TimeUnits.day())).toString().slice(0,7);
+    })
+    .error(function(data, status) {
+      console.error('Error, Status Code: ', status);
+    });
 })
 .factory('TimeUnits', function () {
   var hour = function() {
@@ -38,4 +41,21 @@ angular.module('crime-stats.timeController', [])
     month: month,
     year: year
   };
-});
+})
+.directive('loading', ['$http', function ($http) {
+  return {
+    restrict: 'A',
+    link: function (scope, elm, attrs) {
+      scope.isLoading = function () {
+        return $http.pendingRequests.length > 0;
+      };
+      scope.$watch(scope.isLoading, function (v) {
+        if(v) {
+            elm.removeClass('hidden');
+        } else {
+            elm.addClass('hidden');
+        }
+      });
+    }
+  };
+}]);

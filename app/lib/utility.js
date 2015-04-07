@@ -73,7 +73,7 @@ exports.toDateObj = function(date) {
     var dateArray = date.split(/-| |:/); // Parse via splitting on '-', ' ', and ':'
     dateArray[1] = +dateArray[1]-1; // Convert month to 0-11
     dateArray.unshift(Date); // Add something as context
-    return new (Date.bind.apply(Date, dateArray));
+    return new (Date.bind.apply(Date, dateArray))();
   } else if (typeof date === 'number') {
     return new Date(date);
   } else {
