@@ -1,4 +1,4 @@
-angular.module('crime-stats', ['crime-stats.controller', 'ui.router'])
+angular.module('crime-stats', ['crime-stats.timeController', 'ui.router'])
 .config(function($stateProvider, $urlRouterProvider, $httpProvider) {
 
   $urlRouterProvider.otherwise('/week');
@@ -6,22 +6,22 @@ angular.module('crime-stats', ['crime-stats.controller', 'ui.router'])
   $stateProvider
     .state('day', {
       url: '/day',
-      templateUrl: 'views/day.html',
+      templateUrl: 'views/timeView.html',
       controller: 'TimeController'
     })
     .state('week', {
       url: '/week',
-      templateUrl: 'views/week.html',
+      templateUrl: 'views/timeView.html',
       controller: 'TimeController'
     })
     .state('month', {
       url: '/month',
-      templateUrl: 'views/month.html',
+      templateUrl: 'views/timeView.html',
       controller: 'TimeController'
     })
     .state('year', {
       url: '/year',
-      templateUrl: 'views/year.html',
+      templateUrl: 'views/timeView.html',
       controller: 'TimeController'
     });
 
