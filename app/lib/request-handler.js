@@ -1,1 +1,1 @@
-var request = require('request');var util = require('./utility');exports.renderIndex = function(req, res) {  res.render('index');}
+var util = require('./utility');exports.renderIndex = function(req, res) {  console.log('entering index');  res.redirect('/index.html');};exports.renderCrime = function(req, res) {  console.log('entering crime');  util.lastUpdatedDate(function(data) {    res.json(data);  });};

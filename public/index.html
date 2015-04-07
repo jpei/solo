@@ -1,0 +1,1 @@
+<!DOCTYPE html><html><head>  <title>SF Crime</title></head><body>One Day Snapshot:<br><script type="text/javascript" src="/bower_components/jquery/dist/jquery.min.js"></script><script>$.get('/crime', function(data){  data.forEach(function(crime){    $('body').append(crime + "<br>");  });});</script></body></html>
