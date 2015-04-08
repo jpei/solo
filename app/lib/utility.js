@@ -46,7 +46,7 @@ exports.query = function(format, dstart, dend, count, callback) {
     } else {
       if (format === 'json') {
         callback(_.map(JSON.parse(body).features, function(feature) {
-          return [feature.properties.date_time, feature.properties.description];
+          return [feature.properties.date_time, feature.properties.description, features.properties.crime_type];
         }));
       } else if (format === 'xml') { // Requesting xml and parsing it to json is faster
         parseString(body, function(err, result) {
@@ -54,7 +54,7 @@ exports.query = function(format, dstart, dend, count, callback) {
             console.error('Failed to parse xml: ', error);
           } else {
             callback(_.map(result.reports.report, function(report) {
-              return [report.$.date_time, report._];
+              return [report.$.date_time, report._, report.$.crime_type];
             }));
           }
         });

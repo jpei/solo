@@ -13,6 +13,37 @@ angular.module('crime-stats.timeController', [])
       $scope.crimes = data;
       $scope.count = $scope.crimes.length;
       $scope.frequency = ($scope.count / (TimeUnits[$scope.timeUnit]() / TimeUnits.day())).toString().slice(0,7);
+      $scope.type = {
+        violent: 0,
+        property: 0,
+        'quality of life': 0,
+        other: 0
+      };
+      for (var i=0; i<$scope.crimes.length; i++) {
+        switch($scope.crimes[i][2].toLowerCase()) {
+          case 'aggravated assault':
+          case 'murder':
+          case 'robbery':
+          case 'simple assault':
+            $scope.type.violent++;
+            break;
+          case 'disturbing the peace':
+          case 'narcotics':
+          case 'alcohol':
+          case 'prostitution':
+            $scope.type.property++;
+            break;
+          case 'theft':
+          case 'vehicle theft':
+          case 'vandalism':
+          case 'burglary':
+          case 'arson':
+            $scope.type['quality of life']++;
+            break;
+          default:
+            $scope.type.other++;
+        }
+      }
     })
     .error(function(data, status) {
       console.error('Error, Status Code: ', status);
@@ -42,7 +73,7 @@ angular.module('crime-stats.timeController', [])
     year: year
   };
 })
-.directive('loading', ['$http', function ($http) {
+.directive('loading', function ($http) {
   return {
     restrict: 'A',
     link: function (scope, elm, attrs) {
@@ -58,4 +89,4 @@ angular.module('crime-stats.timeController', [])
       });
     }
   };
-}]);
+});

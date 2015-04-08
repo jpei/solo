@@ -1,8 +1,16 @@
-<h2><div class="info">One {{capitalizeFirstLetter(timeUnit)}} Snapshot: <br>
-  Earliest: {{crimes[crimes.length-1][0].slice(0,10)}} <br>
-  Latest: {{crimes[0][0].slice(0,10)}} <br>
-  Count: {{count}} <br>
-  Frequency: {{frequency}}/day <br>
+<div class="info">
+  <div class="info-header">One {{capitalizeFirstLetter(timeUnit)}} Snapshot:</div>
+  <div class="info-header">Stats by Time:</div>
+    Earliest: {{crimes[crimes.length-1][0].slice(0,10)}} <br>
+    Latest: {{crimes[0][0].slice(0,10)}} <br>
+    Count: {{count}} <br>
+    Frequency: {{frequency}}/day
+  <div class="info-header">Stats by Type: </div>
+    Violent: {{type.violent}} <br>
+    Property: {{type.property}} <br>
+    Quality of Life: {{type['quality of life']}} <br>
+    <span ng-if="type.other">Other: {{type.other}}</span>
+</div>
+
 <img src="assets/spiffygif_46x46.gif" loading />
-</div></h2>
 <div class="crime" ng-repeat='crime in crimes'>{{crime[1]}}</div>

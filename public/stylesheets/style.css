@@ -5,12 +5,13 @@ font-family: arial, sans-serif;
 }
 a {
 color: #333;
-font-size: 14px;
+font-size: 100%;
 text-decoration: none;
 }
 h1 {
 font-style: italic;
 margin-bottom: 10px;
+font-size: 250%;
 }
 .navigation {
 width: 100%;
@@ -47,10 +48,16 @@ margin-top: 10px;
   clear: both;
   margin-bottom: 2px;
   padding: 2px;
-  min-height: 10px
+  min-height: 10px;
+  font-size: 75%;
 }
 .info {
+  font-weight: 400;
+  font-size: 100%;
+}
+.info-header {
   font-weight: 600;
+  font-size: 150%;
 }
 .hidden {
   display: none;
