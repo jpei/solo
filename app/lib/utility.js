@@ -1,5 +1,4 @@
 var request = require('request');
-var _ = require('underscore');
 var parseString = require('xml2js').parseString;
 
 exports.lastUpdatedDate = function(callback) {
@@ -53,7 +52,7 @@ exports.query = function(params) {
       console.error('Failed to get statistics: ', error || response.statusCode);
     } else {
       if (params.format === 'json') {
-        params.callback(_.map(JSON.parse(body).features, function(feature) {
+        params.callback(JSON.parse(body).features.map(function(feature) {
           return [feature.properties.date_time, feature.properties.description, features.properties.crime_type];
         }));
       } else if (params.format === 'xml') { // Requesting xml and parsing it to json is faster
@@ -62,7 +61,7 @@ exports.query = function(params) {
             console.error('Failed to parse xml: ', error);
           } else {
             var done = result.reports.report.length < params.count;
-            params.callback(_.map(result.reports.report, function(report) {
+            params.callback(result.reports.report.map(function(report) {
               return [report.$.date_time, report._, report.$.crime_type];
             }), done);
             if (!done && continue) {
