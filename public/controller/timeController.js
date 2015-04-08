@@ -4,25 +4,34 @@ angular.module('crime-stats.timeController', [])
   $scope.crimes = [];
   $scope.count = $scope.frequency = 0;
   $scope.timeUnit = $location.$$url.slice(1);
+  $scope.type = {
+    violent: 0,
+    property: 0,
+    'quality of life': 0,
+    other: 0
+  };
+  $scope.dayOfWeek = [0,0,0,0,0,0,0];
+
   $scope.capitalizeFirstLetter = function(str) {
     return str.charAt(0).toUpperCase()+str.slice(1);
   };
 
   $http.get('/crime/'+$scope.timeUnit)
     .success(function(data) {
-      $scope.crimes = data;
+      console.log('ON SUCCESS');
+      if (!Array.isArray(data)) {
+        console.error('Data is not parseable');
+        return;
+      }
+      var newCrimes = data;
+      $scope.crimes = $scope.crimes.concat(newCrimes);
       $scope.count = $scope.crimes.length;
       $scope.frequency = ($scope.count / (TimeUnits[$scope.timeUnit]() / TimeUnits.day())).toString().slice(0,7);
 
       // Count crimes by type
-      $scope.type = {
-        violent: 0,
-        property: 0,
-        'quality of life': 0,
-        other: 0
-      };
-      for (var i=0; i<$scope.crimes.length; i++) {
-        switch($scope.crimes[i][2].toLowerCase()) {
+
+      for (var i=0; i<newCrimes.length; i++) {
+        switch(newCrimes[i][2].toLowerCase()) {
           case 'aggravated assault':
           case 'murder':
           case 'robbery':
@@ -47,17 +56,15 @@ angular.module('crime-stats.timeController', [])
         }
       }
 
-      $scope.dayOfWeek = null;
       // Count crimes by day of week
       if (TimeUnits[$scope.timeUnit]()>=TimeUnits.week()) {
-        $scope.dayOfWeek = [0,0,0,0,0,0,0];
-        for (var i=0; i<$scope.crimes.length; i++) {
-          $scope.dayOfWeek[new Date($scope.crimes[i][0].split('T')[0]).getUTCDay()]++; // Slice off end to suppress time zones
+        for (var i=0; i<newCrimes.length; i++) {
+          $scope.dayOfWeek[new Date(newCrimes[i][0].split('T')[0]).getUTCDay()]++; // Slice off end to suppress time zones
         }
       }
     })
     .error(function(data, status) {
-      console.error('Error, Status Code: ', status);
+      console.error('Error, Status Code: ', status || 500);
     });
 }])
 .factory('TimeUnits', function () {
