@@ -6,11 +6,14 @@
     Count: {{count}} <br>
     Frequency: {{frequency}}/day
   <div class="info-header">Stats by Type: </div>
-    Violent: {{type.violent}} <br>
-    Property: {{type.property}} <br>
-    Quality of Life: {{type['quality of life']}} <br>
-    <span ng-if="type.other">Other: {{type.other}}</span>
+    Violent: {{type.violent}} ({{(100*(type.violent/count)).toString().slice(0,5)}}%)<br>
+    Property: {{type.property}} ({{(100*(type.property/count)).toString().slice(0,5)}}%)<br>
+    Quality of Life: {{type['quality of life']}} ({{(100*(type['quality of life']/count)).toString().slice(0,5)}}%)<br>
+    <span ng-if="type.other">Other: {{type.other}} ({{(100*(type.other/count)).toString().slice(0,5)}}%)</span>
 </div>
 
-<img src="assets/spiffygif_46x46.gif" loading />
-<div class="crime" ng-repeat='crime in crimes'>{{crime[1]}}</div>
+<div class="crime">
+  <div class="crime-header">Individual Crimes: </div>
+  <img src="assets/spiffygif_46x46.gif" loading />
+  <div class="crime-entry" ng-repeat='crime in crimes'>{{crime[1]}}</div>
+</div>

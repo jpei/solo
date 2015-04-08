@@ -13,6 +13,8 @@ angular.module('crime-stats.timeController', [])
       $scope.crimes = data;
       $scope.count = $scope.crimes.length;
       $scope.frequency = ($scope.count / (TimeUnits[$scope.timeUnit]() / TimeUnits.day())).toString().slice(0,7);
+
+      // Count crimes by type
       $scope.type = {
         violent: 0,
         property: 0,
@@ -43,6 +45,11 @@ angular.module('crime-stats.timeController', [])
           default:
             $scope.type.other++;
         }
+      }
+
+      // Count crimes by day of week
+      if (TimeUnits[$scope.timeUnit]()>=TimeUnits.week()) {
+
       }
     })
     .error(function(data, status) {
