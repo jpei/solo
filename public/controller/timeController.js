@@ -47,9 +47,13 @@ angular.module('crime-stats.timeController', [])
         }
       }
 
+      $scope.dayOfWeek = null;
       // Count crimes by day of week
       if (TimeUnits[$scope.timeUnit]()>=TimeUnits.week()) {
-
+        $scope.dayOfWeek = [0,0,0,0,0,0,0];
+        for (var i=0; i<$scope.crimes.length; i++) {
+          $scope.dayOfWeek[new Date($scope.crimes[i][0].split('T')[0]).getUTCDay()]++; // Slice off end to suppress time zones
+        }
       }
     })
     .error(function(data, status) {

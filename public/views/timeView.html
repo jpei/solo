@@ -4,12 +4,22 @@
     Earliest: {{crimes[crimes.length-1][0].slice(0,10)}} <br>
     Latest: {{crimes[0][0].slice(0,10)}} <br>
     Count: {{count}} <br>
-    Frequency: {{frequency}}/day
+    Frequency: {{frequency}}/day <br>
   <div class="info-header">Stats by Type: </div>
     Violent: {{type.violent}} ({{(100*(type.violent/count)).toString().slice(0,5)}}%)<br>
     Property: {{type.property}} ({{(100*(type.property/count)).toString().slice(0,5)}}%)<br>
     Quality of Life: {{type['quality of life']}} ({{(100*(type['quality of life']/count)).toString().slice(0,5)}}%)<br>
-    <span ng-if="type.other">Other: {{type.other}} ({{(100*(type.other/count)).toString().slice(0,5)}}%)</span>
+    <span ng-if="type.other">Other: {{type.other}} ({{(100*(type.other/count)).toString().slice(0,5)}}%)<br></span>
+  <div ng-if="dayOfWeek">
+    <div class="info-header">Stats by Day of Week:</div>
+      Sunday: {{dayOfWeek[0]}} ({{(100*(dayOfWeek[0]/count)).toString().slice(0,5)}}%) <br>
+      Monday: {{dayOfWeek[1]}} ({{(100*(dayOfWeek[1]/count)).toString().slice(0,5)}}%) <br>
+      Tuesday: {{dayOfWeek[2]}} ({{(100*(dayOfWeek[2]/count)).toString().slice(0,5)}}%) <br>
+      Wednesday: {{dayOfWeek[3]}} ({{(100*(dayOfWeek[3]/count)).toString().slice(0,5)}}%) <br>
+      Thursday: {{dayOfWeek[4]}} ({{(100*(dayOfWeek[4]/count)).toString().slice(0,5)}}%) <br>
+      Friday: {{dayOfWeek[5]}} ({{(100*(dayOfWeek[5]/count)).toString().slice(0,5)}}%) <br>
+      Saturday: {{dayOfWeek[6]}} ({{(100*(dayOfWeek[6]/count)).toString().slice(0,5)}}%) <br>
+  </div>
 </div>
 
 <div class="crime">
