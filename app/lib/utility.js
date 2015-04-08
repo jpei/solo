@@ -17,10 +17,10 @@ exports.week = function() {
   return 7*exports.day();
 };
 exports.month = function() {
-  return 30*exports.day();
+  return 28*exports.day(); // Written in terms of weeks to support analysis per day of week
 };
 exports.year = function() {
-  return 365*exports.day();
+  return 364*exports.day();
 };
 
 exports.query = function(format, dstart, dend, count, callback) {

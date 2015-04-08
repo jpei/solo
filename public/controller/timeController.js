@@ -70,11 +70,11 @@ angular.module('crime-stats.timeController', [])
   var week = function() {
     return 7*day();
   };
-  var month = function() {
-    return 30*day();
+  var month = function() { // month and year in terms of weeks to better support crimes / day of week
+    return 28*day();
   };
   var year = function() {
-    return 365*day();
+    return 364*day();
   };
   return {
     hour: hour,
