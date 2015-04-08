@@ -3,8 +3,11 @@ var _ = require('underscore');
 var parseString = require('xml2js').parseString;
 
 exports.lastUpdatedDate = function(callback) {
-  exports.query('xml', Date.now()-exports.year(), null, 1, function(crimeData) {
-    callback(crimeData[0][0].split(' ')[0]); // returns YYYY-MM-DD
+  exports.query({
+    count: 1,
+    callback: function(crimeData) {
+      callback(crimeData[0][0].split(' ')[0]);
+    }
   });
 };
 exports.hour = function() {
@@ -23,39 +26,49 @@ exports.year = function() {
   return 364*exports.day();
 };
 
-exports.query = function(format, dstart, dend, count, callback) {
-  format = format || 'xml';
-  dstart = dstart || Date.now()-exports.month();
-  dend = dend || Date.now();
-  count = count || 100000;
+exports.query = function(params) {
+  // format, dstart, dend, count, offset, callback, continue
+  params = params || {};
+  params.format = params.format || 'xml';
+  params.dstart = params.dstart || Date.now()-exports.year();
+  params.dend = params.dend || Date.now();
+  params.count = params.count || 1000;
+  params.offset = params.offset || 0;
+  params.callback = params.callback || function() {};
+  params.continue = params.continue || false;
 
   var options = {
     url: 'http://sanfrancisco.crimespotting.org/crime-data.php',
     method: 'GET',
     headers: { 'Content-Type': 'application/json' },
     qs: {
-      format: format,
-      count: count,
-      dstart: exports.toDateString(dstart),
-      dend: exports.toDateString(dend)
+      format: params.format,
+      count: params.count,
+      dstart: exports.toDateString(params.dstart),
+      dend: exports.toDateString(params.dend)
     }
   };
   request(options, function(error, response, body) {
     if (error || response.statusCode !== 200) {
       console.error('Failed to get statistics: ', error || response.statusCode);
     } else {
-      if (format === 'json') {
-        callback(_.map(JSON.parse(body).features, function(feature) {
+      if (params.format === 'json') {
+        params.callback(_.map(JSON.parse(body).features, function(feature) {
           return [feature.properties.date_time, feature.properties.description, features.properties.crime_type];
         }));
-      } else if (format === 'xml') { // Requesting xml and parsing it to json is faster
+      } else if (params.format === 'xml') { // Requesting xml and parsing it to json is faster
         parseString(body, function(err, result) {
           if (error) {
             console.error('Failed to parse xml: ', error);
           } else {
-            callback(_.map(result.reports.report, function(report) {
+            var done = result.reports.report.length < params.count;
+            params.callback(_.map(result.reports.report, function(report) {
               return [report.$.date_time, report._, report.$.crime_type];
-            }));
+            }), done);
+            if (!done && continue) {
+              params.offset += params.count;
+              query(params);
+            }
           }
         });
       } else {

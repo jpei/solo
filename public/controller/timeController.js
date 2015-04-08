@@ -1,6 +1,6 @@
 angular.module('crime-stats.timeController', [])
 
-.controller('TimeController', function ($scope, $http, $location, TimeUnits) {
+.controller('TimeController', ['$scope', '$http', '$location', 'TimeUnits', function ($scope, $http, $location, TimeUnits) {
   $scope.crimes = [];
   $scope.count = $scope.frequency = 0;
   $scope.timeUnit = $location.$$url.slice(1);
@@ -59,7 +59,7 @@ angular.module('crime-stats.timeController', [])
     .error(function(data, status) {
       console.error('Error, Status Code: ', status);
     });
-})
+}])
 .factory('TimeUnits', function () {
   var hour = function() {
     return 60*60*1000;
@@ -84,7 +84,7 @@ angular.module('crime-stats.timeController', [])
     year: year
   };
 })
-.directive('loading', function ($http) {
+.directive('loading', ['$http', function ($http) {
   return {
     restrict: 'A',
     link: function (scope, elm, attrs) {
@@ -100,4 +100,4 @@ angular.module('crime-stats.timeController', [])
       });
     }
   };
-});
+}]);

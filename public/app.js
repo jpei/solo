@@ -1,5 +1,5 @@
 angular.module('crime-stats', ['crime-stats.timeController', 'ui.router'])
-.config(function($stateProvider, $urlRouterProvider, $httpProvider) {
+.config(['$stateProvider', '$urlRouterProvider', '$httpProvider', function($stateProvider, $urlRouterProvider, $httpProvider) {
 
   $urlRouterProvider.otherwise('/week');
 
@@ -26,7 +26,7 @@ angular.module('crime-stats', ['crime-stats.timeController', 'ui.router'])
     });
 
   $httpProvider.interceptors.push('AttachTokens');
-})
+}])
 .factory('AttachTokens', function() {
   return {
     request: function (object) {
