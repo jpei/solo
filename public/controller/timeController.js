@@ -31,33 +31,27 @@ angular.module('crime-stats.timeController', [])
       return;
     if (http.readyState === 4 && http.status !== 200) {
       clearInterval(pollTimer);
-      inProgress = false;
+      $scope.isLoading = false;
+      $scope.digest();
     }
     // In konqueror http.responseText is sometimes null here...
     if (http.responseText === null)
       return;
 
-    // while (prevDataLength !== http.responseText.length) {
-    //   if (http.readyState === 4  && prevDataLength === http.responseText.length)
-    //     break;
-    //   prevDataLength = http.responseText.length;
-    //   var response = http.responseText.substring(nextLine);
-    //   var lines = response.split('\n');
-    //   nextLine = nextLine + response.lastIndexOf('\n') + 1;
-    //   if (response[response.length-1] !== '\n')
-    //     lines.pop();
+    var unparsed = http.responseText.slice(prevDataLength);
+    var findBreak = unparsed.indexOf(']]');
+    while (findBreak >= 0) { // Check for end of data "packet"
+      AnalyzeCrimes.analyzeAll(JSON.parse(unparsed.slice(0, findBreak+2)), $scope, TimeUnits);
+      prevDataLength += findBreak+2;
+      unparsed = unparsed.slice(findBreak+2);
+      findBreak = unparsed.indexOf(']]');
+    }
 
-    //   for (var i = 0; i < lines.length; i++) {
-    //       // ...
-    //   }
-    // }
-    console.log(http.responseText.length);
-    // http.responseText = '';
-
-    if (http.readyState === 4 && prevDataLength === http.responseText.length)
+    if (http.readyState === 4) {
       clearInterval(pollTimer);
-
-    inProgress = false;
+      $scope.isLoading = false;
+      $scope.digest();
+    }
   };
 
   var http = createXMLHttpRequest();
@@ -65,20 +59,8 @@ angular.module('crime-stats.timeController', [])
   http.onreadystatechange = handleResponse;
   http.send();
   var pollTimer = setInterval(handleResponse, 1000);
-  var inProgress = true;
-
-  // $http.get('/crime/'+$scope.timeUnit)
-  //   .success(function(data) {
-  //     console.log('ON SUCCESS');
-  //     if (!Array.isArray(data)) {
-  //       console.error('Data is not parseable');
-  //       return;
-  //     }
-  //     AnalyzeCrimes.analyzeAll(data, $scope, TimeUnits);
-  //   })
-  //   .error(function(data, status) {
-  //     console.error('Error, Status Code: ', status || 500);
-  //   });
+  $scope.isLoading = true;
+  var prevDataLength = 0;
 }])
 .factory('TimeUnits', function () {
   var hour = function() {
@@ -106,6 +88,7 @@ angular.module('crime-stats.timeController', [])
 })
 .factory('AnalyzeCrimes', function() {
   var analyzeAll = function(data, $scope, TimeUnits) {
+    console.log(JSON.stringify(data));
     var newCrimes = data;
     $scope.crimes = $scope.crimes.concat(newCrimes);
     $scope.count = $scope.crimes.length;
@@ -143,24 +126,10 @@ angular.module('crime-stats.timeController', [])
       for (var j=0; j<newCrimes.length; j++) {
         $scope.dayOfWeek[new Date(newCrimes[j][0].split('T')[0]).getUTCDay()]++; // Slice off end to suppress time zones
       }
+    } else {
+      $scope.dayOfWeek = null;
     }
+    $scope.$apply();
   };
   return { analyzeAll : analyzeAll };
 })
-.directive('loading', ['$http', function ($http) {
-  return {
-    restrict: 'A',
-    link: function (scope, elm, attrs) {
-      scope.isLoading = function () {
-        return $http.pendingRequests.length > 0;
-      };
-      scope.$watch(scope.isLoading, function (v) {
-        if(v) {
-            elm.removeClass('hidden');
-        } else {
-            elm.addClass('hidden');
-        }
-      });
-    }
-  };
-}]);

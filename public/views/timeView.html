@@ -24,6 +24,6 @@
 
 <div class="crime">
   <div class="crime-header">Individual Crimes: </div>
-  <img src="assets/spiffygif_46x46.gif" loading />
+  <img src="assets/spiffygif_46x46.gif" ng-if="isLoading">
   <div class="crime-entry" ng-repeat='crime in crimes'>{{crime[1]}}</div>
 </div>
