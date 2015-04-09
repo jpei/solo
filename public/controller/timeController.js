@@ -1,6 +1,6 @@
 angular.module('crime-stats.timeController', [])
 
-.controller('TimeController', ['$scope', '$http', '$location', '$window', 'TimeUnits', 'AnalyzeCrimes', function ($scope, $http, $location, $window, TimeUnits, AnalyzeCrimes) {
+.controller('TimeController', ['$scope', '$location', '$window', 'TimeUnits', 'SendXHR', 'AnalyzeCrimes', function($scope, $location, $window, TimeUnits, SendXHR, AnalyzeCrimes) {
   $scope.crimes = [];
   $scope.count = $scope.frequency = 0;
   $scope.timeUnit = $location.$$url.slice(1);
@@ -17,53 +17,9 @@ angular.module('crime-stats.timeController', [])
     return str.charAt(0).toUpperCase()+str.slice(1);
   };
 
-  var createXMLHttpRequest = function() {
-    try { return new $window.XMLHttpRequest();                   } catch(e) {}
-    try { return new $window.ActiveXObject("Microsoft.XMLHTTP"); } catch(e) {}
-    try { return new $window.ActiveXObject("Msxml2.XMLHTTP");    } catch(e) {}
-    $window.alert("XMLHttpRequest not supported");
-    return null;
-  };
-
-  var handleResponse = function() {
-    if (http.readyState !== 4 && http.readyState !== 3)
-      return;
-    if (http.readyState === 3 && http.status !== 200)
-      return;
-    if (http.readyState === 4 && http.status !== 200) {
-      clearInterval(pollTimer);
-      $scope.isLoading = false;
-      $scope.$apply();
-    }
-    // In konqueror http.responseText is sometimes null here...
-    if (http.responseText === null)
-      return;
-
-    var unparsed = http.responseText.slice(prevDataLength);
-    var findBreak = unparsed.indexOf(']]');
-    while (findBreak >= 0) { // Check for end of data "packet"
-      AnalyzeCrimes.analyzeAll(JSON.parse(unparsed.slice(0, findBreak+2)), $scope, TimeUnits);
-      prevDataLength += findBreak+2;
-      unparsed = unparsed.slice(findBreak+2);
-      findBreak = unparsed.indexOf(']]');
-    }
-
-    if (http.readyState === 4) {
-      clearInterval(pollTimer);
-      $scope.isLoading = false;
-      $scope.$apply();
-    }
-  };
-
-  var http = createXMLHttpRequest();
-  http.open('GET', '/crime/'+$scope.timeUnit, true);
-  http.onreadystatechange = handleResponse;
-  http.send();
-  var pollTimer = setInterval(handleResponse, 1000);
-  $scope.isLoading = true;
-  var prevDataLength = 0;
+  SendXHR.sendXHR($scope, $window, TimeUnits, AnalyzeCrimes);
 }])
-.factory('TimeUnits', function () {
+.factory('TimeUnits', function() {
   var hour = function() {
     return 60*60*1000;
   };
@@ -86,6 +42,55 @@ angular.module('crime-stats.timeController', [])
     month: month,
     year: year
   };
+})
+.factory('SendXHR', function() {
+  var sendXHR = function($scope, $window, TimeUnits, AnalyzeCrimes) {
+    var createXMLHttpRequest = function() {
+      try { return new $window.XMLHttpRequest();                   } catch(e) {}
+      try { return new $window.ActiveXObject("Microsoft.XMLHTTP"); } catch(e) {}
+      try { return new $window.ActiveXObject("Msxml2.XMLHTTP");    } catch(e) {}
+      $window.alert("XMLHttpRequest not supported");
+      return null;
+    };
+    var handleResponse = function() {
+      if (http.readyState !== 4 && http.readyState !== 3)
+        return;
+      if (http.readyState === 3 && http.status !== 200)
+        return;
+      if (http.readyState === 4 && http.status !== 200) {
+        clearInterval(pollTimer);
+        $scope.isLoading = false;
+        $scope.$apply();
+      }
+      // In konqueror http.responseText is sometimes null here...
+      if (http.responseText === null)
+        return;
+
+      var unparsed = http.responseText.slice(prevDataLength);
+      var findBreak = unparsed.indexOf(']]');
+      while (findBreak >= 0) { // Check for end of data "packet"
+        AnalyzeCrimes.analyzeAll(JSON.parse(unparsed.slice(0, findBreak+2)), $scope, TimeUnits);
+        prevDataLength += findBreak+2;
+        unparsed = unparsed.slice(findBreak+2);
+        findBreak = unparsed.indexOf(']]');
+      }
+
+      if (http.readyState === 4) {
+        clearInterval(pollTimer);
+        $scope.isLoading = false;
+        $scope.$apply();
+      }
+    };
+
+    var http = createXMLHttpRequest();
+    http.open('GET', '/crime/'+$scope.timeUnit, true);
+    http.onreadystatechange = handleResponse;
+    http.send();
+    var pollTimer = setInterval(handleResponse, 1000);
+    $scope.isLoading = true;
+    var prevDataLength = 0;
+  };
+  return { sendXHR : sendXHR };
 })
 .factory('AnalyzeCrimes', function() {
   var analyzeAll = function(data, $scope, TimeUnits) {
@@ -139,4 +144,4 @@ angular.module('crime-stats.timeController', [])
     $scope.$apply();
   };
   return { analyzeAll : analyzeAll };
-})
+});
