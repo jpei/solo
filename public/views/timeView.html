@@ -10,6 +10,15 @@
     Property: {{type.property}} ({{(100*(type.property/count)).toString().slice(0,5)}}%)<br>
     Quality of Life: {{type['quality of life']}} ({{(100*(type['quality of life']/count)).toString().slice(0,5)}}%)<br>
     <span ng-if="type.other">Other: {{type.other}} ({{(100*(type.other/count)).toString().slice(0,5)}}%)<br></span>
+  <div class="info-header">Stats by Time of Day:</div>
+    12:00AM - 02:55AM : {{timeOfDay[0]}} ({{(100*(timeOfDay[0]/count)).toString().slice(0,5)}}%) <br>
+    03:00AM - 05:55AM : {{timeOfDay[1]}} ({{(100*(timeOfDay[1]/count)).toString().slice(0,5)}}%) <br>
+    06:00AM - 08:55AM : {{timeOfDay[2]}} ({{(100*(timeOfDay[2]/count)).toString().slice(0,5)}}%) <br>
+    09:00AM - 11:55AM : {{timeOfDay[3]}} ({{(100*(timeOfDay[3]/count)).toString().slice(0,5)}}%) <br>
+    12:00PM - 02:55PM : {{timeOfDay[4]}} ({{(100*(timeOfDay[4]/count)).toString().slice(0,5)}}%) <br>
+    03:00PM - 05:55PM : {{timeOfDay[5]}} ({{(100*(timeOfDay[5]/count)).toString().slice(0,5)}}%) <br>
+    06:00PM - 08:55PM : {{timeOfDay[6]}} ({{(100*(timeOfDay[6]/count)).toString().slice(0,5)}}%) <br>
+    09:00PM - 11:55PM : {{timeOfDay[7]}} ({{(100*(timeOfDay[7]/count)).toString().slice(0,5)}}%) <br>
   <div ng-if="dayOfWeek">
     <div class="info-header">Stats by Day of Week:</div>
       Sunday: {{dayOfWeek[0]}} ({{(100*(dayOfWeek[0]/count)).toString().slice(0,5)}}%) <br>

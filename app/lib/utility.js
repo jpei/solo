@@ -35,7 +35,6 @@ exports.query = function(params) {
   params.offset = params.offset || 0;
   params.callback = params.callback || function() {};
   params.continue = params.continue || false;
-  console.log('Query Called with Params: ', JSON.stringify(params));
 
   var options = {
     url: 'http://sanfrancisco.crimespotting.org/crime-data.php',
@@ -62,7 +61,6 @@ exports.query = function(params) {
           if (error) {
             console.error('Failed to parse xml: ', error);
           } else {
-            console.log('Length < Count?', result.reports.report.length, params.count);
             var done = result.reports.report.length < params.count;
             params.callback(result.reports.report.map(function(report) {
               return [report.$.date_time, report._, report.$.crime_type];

@@ -11,6 +11,7 @@ angular.module('crime-stats.timeController', [])
     other: 0
   };
   $scope.dayOfWeek = [0,0,0,0,0,0,0];
+  $scope.timeOfDay = [0,0,0,0,0,0,0,0];
 
   $scope.capitalizeFirstLetter = function(str) {
     return str.charAt(0).toUpperCase()+str.slice(1);
@@ -32,7 +33,7 @@ angular.module('crime-stats.timeController', [])
     if (http.readyState === 4 && http.status !== 200) {
       clearInterval(pollTimer);
       $scope.isLoading = false;
-      $scope.digest();
+      $scope.$apply();
     }
     // In konqueror http.responseText is sometimes null here...
     if (http.responseText === null)
@@ -50,7 +51,7 @@ angular.module('crime-stats.timeController', [])
     if (http.readyState === 4) {
       clearInterval(pollTimer);
       $scope.isLoading = false;
-      $scope.digest();
+      $scope.$apply();
     }
   };
 
@@ -88,7 +89,6 @@ angular.module('crime-stats.timeController', [])
 })
 .factory('AnalyzeCrimes', function() {
   var analyzeAll = function(data, $scope, TimeUnits) {
-    console.log(JSON.stringify(data));
     var newCrimes = data;
     $scope.crimes = $scope.crimes.concat(newCrimes);
     $scope.count = $scope.crimes.length;
@@ -121,14 +121,21 @@ angular.module('crime-stats.timeController', [])
       }
     }
 
+    // Count crimes by time of day
+    for (var j=0; j<newCrimes.length; j++) {
+      $scope.timeOfDay[Math.floor(+newCrimes[j][0].split('T')[1].slice(0,2)/3)]++;
+    }
+
     // Count crimes by day of week
     if (TimeUnits[$scope.timeUnit]()>=TimeUnits.week()) {
-      for (var j=0; j<newCrimes.length; j++) {
-        $scope.dayOfWeek[new Date(newCrimes[j][0].split('T')[0]).getUTCDay()]++; // Slice off end to suppress time zones
+      for (var k=0; k<newCrimes.length; k++) {
+        $scope.dayOfWeek[new Date(newCrimes[k][0].split('T')[0]).getUTCDay()]++; // Slice off end to suppress time zones
       }
     } else {
       $scope.dayOfWeek = null;
     }
+
+    // Apply changes to view
     $scope.$apply();
   };
   return { analyzeAll : analyzeAll };
