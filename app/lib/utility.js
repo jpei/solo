@@ -42,8 +42,8 @@ exports.query = function(params) {
     headers: { 'Content-Type': 'application/json' },
     qs: {
       format: params.format,
-      dstart: exports.toDateString(params.dstart),
-      dend: exports.toDateString(params.dend),
+      dstart: toDateString(params.dstart),
+      dend: toDateString(params.dend),
       count: params.count,
       offset: params.offset
     }
@@ -53,29 +53,18 @@ exports.query = function(params) {
       console.error('Failed to get statistics: ', error || response.statusCode);
     } else {
       if (params.format === 'json') {
-        var features = JSON.parse(body).features;
-        var done = features.length < params.count;
-        params.callback(features.map(function(feature) {
-          return [feature.properties.date_time.split(' '), feature.properties.description, feature.properties.crime_type];
-        }), done);
-        if (!done && params.again) {
-          params.offset += params.count;
-          exports.query(params);
-        }
+        handleData(JSON.parse(body).features, function(report) {
+          return [report.properties.date_time.split(' '), report.properties.description, report.properties.crime_type];
+        }, params);
       } else if (params.format === 'xml') { // Requesting xml and parsing it to json may be faster
         parseString(body, function(err, result) {
           if (error) {
             console.error('Failed to parse xml: ', error);
           } else {
-            var done = result.reports.report.length < params.count;
-            params.callback(result.reports.report.map(function(report) {
+            handleData(result.reports.report, function(report) {
               var dateTimeParts = report.$.date_time.split('T');
               return [[dateTimeParts[0], dateTimeParts[1].slice(0,8)], report._, report.$.crime_type];
-            }), done);
-            if (!done && params.again) {
-              params.offset += params.count;
-              exports.query(params);
-            }
+            }, params);
           }
         });
       } else {
@@ -85,7 +74,16 @@ exports.query = function(params) {
   });
 };
 
-exports.toDateObj = function(date) {
+var handleData = function(reports, parseReport, params) {
+  var done = reports.length < params.count;
+  params.callback(reports.map(parseReport), done);
+  if (!done && params.again) {
+    params.offset += params.count;
+    exports.query(params);
+  }
+};
+
+var toDateObj = function(date) {
   var parseable = Date.parse(date);
   if (parseable === parseable) {
     return new Date(date);
@@ -101,8 +99,8 @@ exports.toDateObj = function(date) {
   }
 };
 
-exports.toDateString = function(date) {
-  var dateObj = exports.toDateObj(date);
+var toDateString = function(date) {
+  var dateObj = toDateObj(date);
   var dateYear = dateObj.getUTCFullYear();
   var dateMonth = dateObj.getUTCMonth()+1 < 10 ? '0'+(dateObj.getUTCMonth()+1) : dateObj.getUTCMonth()+1;
   var dateDate = dateObj.getUTCDate() < 10 ? '0'+dateObj.getUTCDate() : dateObj.getUTCDate();
