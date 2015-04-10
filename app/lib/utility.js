@@ -5,7 +5,7 @@ exports.lastUpdatedDate = function(callback) {
   exports.query({
     count: 1,
     callback: function(crimeData) {
-      callback(crimeData[0][0].split(' ')[0]);
+      callback(crimeData[0][0][0]);
     }
   });
 };
@@ -26,15 +26,15 @@ exports.year = function() {
 };
 
 exports.query = function(params) {
-  // format, dstart, dend, count, offset, callback, continue
+  // format, dstart, dend, count, offset, callback, again
   params = params || {};
-  params.format = params.format || 'xml';
+  params.format = params.format || 'json';
   params.dstart = params.dstart || Date.now()-exports.year();
   params.dend = params.dend || Date.now();
   params.count = params.count || 1000;
   params.offset = params.offset || 0;
   params.callback = params.callback || function() {};
-  params.continue = params.continue || false;
+  params.again = params.again || false;
 
   var options = {
     url: 'http://sanfrancisco.crimespotting.org/crime-data.php',
@@ -53,19 +53,26 @@ exports.query = function(params) {
       console.error('Failed to get statistics: ', error || response.statusCode);
     } else {
       if (params.format === 'json') {
-        params.callback(JSON.parse(body).features.map(function(feature) {
-          return [feature.properties.date_time, feature.properties.description, features.properties.crime_type];
-        }));
-      } else if (params.format === 'xml') { // Requesting xml and parsing it to json is faster
+        var features = JSON.parse(body).features;
+        var done = features.length < params.count;
+        params.callback(features.map(function(feature) {
+          return [feature.properties.date_time.split(' '), feature.properties.description, feature.properties.crime_type];
+        }), done);
+        if (!done && params.again) {
+          params.offset += params.count;
+          exports.query(params);
+        }
+      } else if (params.format === 'xml') { // Requesting xml and parsing it to json may be faster
         parseString(body, function(err, result) {
           if (error) {
             console.error('Failed to parse xml: ', error);
           } else {
             var done = result.reports.report.length < params.count;
             params.callback(result.reports.report.map(function(report) {
-              return [report.$.date_time, report._, report.$.crime_type];
+              var dateTimeParts = report.$.date_time.split('T');
+              return [[dateTimeParts[0], dateTimeParts[1].slice(0,8)], report._, report.$.crime_type];
             }), done);
-            if (!done && params.continue) {
+            if (!done && params.again) {
               params.offset += params.count;
               exports.query(params);
             }

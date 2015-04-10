@@ -128,13 +128,13 @@ angular.module('crime-stats.timeController', [])
 
     // Count crimes by time of day
     for (var j=0; j<newCrimes.length; j++) {
-      $scope.timeOfDay[Math.floor(+newCrimes[j][0].split('T')[1].slice(0,2)/3)]++;
+      $scope.timeOfDay[Math.floor(+newCrimes[j][0][1].slice(0,2)/3)]++;
     }
 
     // Count crimes by day of week
     if (TimeUnits[$scope.timeUnit]()>=TimeUnits.week()) {
       for (var k=0; k<newCrimes.length; k++) {
-        $scope.dayOfWeek[new Date(newCrimes[k][0].split('T')[0]).getUTCDay()]++; // Slice off end to suppress time zones
+        $scope.dayOfWeek[new Date(newCrimes[k][0][0]).getUTCDay()]++; // Slice off end to suppress time zones
       }
     } else {
       $scope.dayOfWeek = null;

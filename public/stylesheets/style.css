@@ -68,9 +68,9 @@ h1 {
   font-weight: 600;
   font-size: 200%;
 }
-/*.crime-entry {
-  margin-bottom: 2px;
-  padding: 2px;
-  min-height: 10px;
-  font-size: 75%;
-}*/
+footer {
+  clear: both;
+  width: 100%;
+  height: 20px;
+  padding: 10px;
+}

@@ -45,3 +45,7 @@ To build on your learning of core engineering concepts, we will begin thinking a
 - [ ] Storage - if your app persists data, use a tool like Parse or Firebase.
 - [ ] If applicable, use an MVC Framework - Make your app production grade with a full-on MVC.
 
+
+
+------------------------------------- Wishlist -------------------------------------
+Caching

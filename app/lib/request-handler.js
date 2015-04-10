@@ -1,7 +1,7 @@
 var util = require('./utility');
 
 exports.renderIndex = function(req, res) {
-  res.redirect('/index.html');
+  res.sendFile('/index.html');
 };
 exports.renderCrime = function(req, res) {
   var timeUnit = req.url.slice(7);
@@ -17,7 +17,7 @@ exports.renderCrime = function(req, res) {
           res.end();
         }
       },
-      continue: true
+      again: true
     });
   });
 };
